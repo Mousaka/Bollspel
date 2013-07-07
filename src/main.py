@@ -16,7 +16,7 @@ def main():
     screen = pygame.display.set_mode([700,300])
     screen.fill([255,255,255])
     print type(screen)
-    mainloop, x, y, color, fontsize, delta, fps =  True, 25 , 0, (32,32,32), 35, 1, 30 
+    mainloop, x, y, color, fontsize, delta, fps =  True, 25 , 0, (32,32,32), 35, 1, 60 
     Clock = pygame.time.Clock()
     b1 = Ball.Ball(screen, (150, 50), 15)
     while mainloop:
