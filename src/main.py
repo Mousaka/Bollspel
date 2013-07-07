@@ -35,7 +35,10 @@ def main():
             if event.type == pygame.QUIT:
                 mainloop = False # Be IDLE friendly!
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_DOWN:
+                    b1.keyDown()
+                    print random(1,3)
+                elif event.key == pygame.K_ESCAPE:
                     mainloop = False # Be IDLE friendly!
         pygame.display.update()
      

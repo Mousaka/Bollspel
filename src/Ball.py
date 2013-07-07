@@ -7,8 +7,8 @@ Created on 6 jul 2013
 '''
 import pygame
 import math
-gravity = (math.pi, 0.01)
-elasticity = 0.75
+gravity = (math.pi, 0.05)
+elasticity = 0.95
 drag = 0.999
 class Ball:
 
@@ -27,13 +27,16 @@ class Ball:
         self.colour = (0,0,255)
         self.thickness = 0
         self.screen=screen
-        self.speed = 5
+        self.speed = 0
         self.angle = math.pi/2
         
     def updatePos(self, x,y):
         self.x = x
         self.y = y
     
+    def keyDown(self):
+        (self.angle,self.speed) = self.addVectors((self.angle,self.speed), (math.pi, 1))
+ 
     #Adderar två vectorer.
     def addVectors(self, (angle1, length1), (angle2, length2)):
         x  = math.sin(angle1) * length1 + math.sin(angle2) * length2
@@ -43,7 +46,7 @@ class Ball:
 
         #Vinkeln på nya vectorn
         angle = (0.5 * math.pi) - math.atan2(y, x) #atan2 är arctan som hanterar "y/0".
-        print str(angle1)+", "+str(length1)+ " + "+ str(angle2)+", "+str(length2)+" = "+str(angle)+", "+str(length)
+        #print str(angle1)+", "+str(length1)+ " + "+ str(angle2)+", "+str(length2)+" = "+str(angle)+", "+str(length)
         return (angle, length)
         
     def move(self):
