@@ -7,9 +7,13 @@ Created on 6 jul 2013
 '''
 import pygame
 import math
-gravity = (math.pi, 0.05)
-elasticity = 0.95
+gravity = (math.pi, 0.3)
+elasticity = 0.9
 drag = 0.999
+drib = 0.05 #Hur hårt man dribblar ner bollen
+
+directions = {'d': math.pi, 'u': 0, 'r': math.pi/2, 'l': (3*math.pi)/2}
+
 class Ball:
 
     '''
@@ -27,16 +31,20 @@ class Ball:
         self.colour = (0,0,255)
         self.thickness = 0
         self.screen=screen
-        self.speed = 0
+        self.speed = 10
         self.angle = math.pi/2
         
     def updatePos(self, x,y):
         self.x = x
         self.y = y
     
+    def dribble(self, d):
+        (self.angle,self.speed) = self.addVectors((self.angle,self.speed), (directions[d], 0.1+ drib*self.speed))
     def keyDown(self):
-        (self.angle,self.speed) = self.addVectors((self.angle,self.speed), (math.pi, 1))
+        (self.angle,self.speed) = self.addVectors((self.angle,self.speed), (math.pi, drib))
  
+    def getDownVec(self):
+        print 'hmm'
     #Adderar två vectorer.
     def addVectors(self, (angle1, length1), (angle2, length2)):
         x  = math.sin(angle1) * length1 + math.sin(angle2) * length2
@@ -54,7 +62,11 @@ class Ball:
         self.x += math.sin(self.angle) * self.speed
         self.y -= math.cos(self.angle) * self.speed
         
+        
         self.speed *= drag
+        
+
+            
         
         self.bounce()
         

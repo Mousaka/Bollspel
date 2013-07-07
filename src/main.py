@@ -12,7 +12,11 @@ def main():
     
 
     pygame.init()
-     
+    K_DOWN = False
+    K_UP = False
+    K_LEFT = False
+    K_RIGHT = False
+    
     screen = pygame.display.set_mode([700,300])
     screen.fill([255,255,255])
     print type(screen)
@@ -23,23 +27,42 @@ def main():
         tickFPS = Clock.tick(fps)
         x = 100
         y = 100
-        pygame.display.set_caption("Press Esc to quit. FPS: %.2f" % (Clock.get_fps()))
+        pygame.display.set_caption("Game of Ball FPS: %.2f" % (Clock.get_fps()))
         fontsize = 50
         myFont = pygame.font.SysFont("None", fontsize)
         color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
         screen.fill((255,255,255))
         b1.move()
         b1.display()
-        screen.blit(myFont.render("I love pygame!", 0, (color)), (10,10))
+        screen.blit(myFont.render("Bounce that shit!", 0, (color)), (10,10))
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                mainloop = False # Be IDLE friendly!
+                mainloop = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
-                    b1.keyDown()
-                    print random(1,3)
+                    K_DOWN = True
+                if event.key == pygame.K_RIGHT:
+                    K_RIGHT = True
+                if event.key == pygame.K_LEFT:
+                    K_LEFT = True
                 elif event.key == pygame.K_ESCAPE:
-                    mainloop = False # Be IDLE friendly!
+                    mainloop = False
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_DOWN:
+                    K_DOWN = False
+                if event.key == pygame.K_LEFT:
+                    K_LEFT = False
+                if event.key == pygame.K_RIGHT:
+                    K_RIGHT = False
+                
+        if K_DOWN:
+            b1.dribble('d')
+        if K_LEFT:
+            b1.dribble('l')
+        if K_RIGHT:
+            b1.dribble('r')
+                    
         pygame.display.update()
      
     pygame.quit() # Be IDLE friendly!
