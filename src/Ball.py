@@ -44,7 +44,10 @@ class Ball:
         (self.angle,self.speed) = self.addVectors((self.angle,self.speed), (math.pi, drib))
  
     def getDownVec(self):
-        print 'hmm'
+        print - math.cos(self.angle) * self.speed
+        return - math.cos(self.angle) * self.speed
+        
+        
     #Adderar två vectorer.
     def addVectors(self, (angle1, length1), (angle2, length2)):
         x  = math.sin(angle1) * length1 + math.sin(angle2) * length2
@@ -85,8 +88,13 @@ class Ball:
             self.speed *= elasticity
         elif self.y> (self.screen.get_height()-self.size):
             self.y = (self.screen.get_height()-self.size)
+            if self.getDownVec() > 5:
+                self.speed *= elasticity
+            else:
+                print "recovering"
+             #   self.addVectors((self.angle, self.speed))
             self.angle = math.pi- self.angle
-            self.speed *= elasticity
+            
         
     def display(self):
         pygame.draw.circle(self.screen, self.colour, (int(self.x), int(self.y)), self.size, self.thickness)
