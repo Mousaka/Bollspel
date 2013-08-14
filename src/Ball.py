@@ -11,7 +11,7 @@ gravity = (math.pi, 0.3)
 elasticity = 0.9
 drag = 0.999
 drib = 0.05 #Hur hårt man dribblar ner bollen
-
+bottom_boarder_height = 28
 directions = {'d': math.pi, 'u': 0, 'r': math.pi/2, 'l': (3*math.pi)/2}
 
 class Ball:
@@ -31,7 +31,7 @@ class Ball:
         self.colour = (0,0,255)
         self.thickness = 0
         self.screen=screen
-        self.speed = 10
+        self.speed = 0
         self.angle = math.pi/2
         
     def updatePos(self, x,y):
@@ -86,8 +86,8 @@ class Ball:
             self.y = self.size
             self.angle = math.pi- self.angle
             self.speed *= elasticity
-        elif self.y> (self.screen.get_height()-self.size):
-            self.y = (self.screen.get_height()-self.size)
+        elif self.y> (self.screen.get_height()-self.size-bottom_boarder_height):   #Gör så bollen studsar på "marken"., bör ändras så den studsar när den nuddar något ist
+            self.y = (self.screen.get_height()-self.size-bottom_boarder_height)
             if self.getDownVec() > 5:
                 self.speed *= elasticity
             else:

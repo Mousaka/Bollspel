@@ -1,3 +1,79 @@
+#!/usr/bin/env python
+# -*- coding: cp1252 -*-
+'''
+Created on 4 jul 2013
+
+@author: krille
+'''
+import ConfigParser, pygame, Ball
+
+MAP_TILE_WIDTH, MAP_TILE_HEIGHT = 24, 16
+SCREEN_SIZE = (800, 300)
+
+class Game(object):
+    
+    def __init__(self):
+        self.screen = pygame.display.get_surface()
+        self.pressed_key = None
+        self.mainloop = True
+        self.b1 = Ball.Ball(self.screen, (150, 50), 15)
+        self.fps = 60
+    
+    def use_level(self, level):
+        #Set level
+        self.overlays = pygame.sprite.RenderUpdates()
+        
+    
+    def control(self):
+        keys = pygame.key.get_pressed()
+        
+        def pressed(key): #kollar om knapp är nedtryckt
+            return self.pressed_key == key or keys[key]
+        
+        
+        if pressed(pygame.K_DOWN):
+            self.b1.dribble('d')
+        if pressed(pygame.K_ESCAPE):
+            self.mainloop = False
+        self.pressed_key = None
+        
+    def main(self):
+        clock = pygame.time.Clock()
+        
+        background, overlay_dict = level.render()
+        overlays = pygame.sprite.RenderUpdates()
+        for (x, y), image in overlay_dict.iteritems():
+            overlay = pygame.sprite.Sprite(overlays)
+            overlay.image = image
+            overlay.rect = image.get_rect().move(x * 24, y * 16 - 16)
+        self.screen.blit(background, (0, SCREEN_SIZE[1]-100))
+        
+        overlays.draw(self.screen)
+        #self.screen.blit(self.background, (0,0))
+        self.screen.fill([255,255,255])
+        pygame.display.flip()
+        m = 0
+        #mainloop
+        while self.mainloop:
+            self.control()
+            pygame.display.set_caption("Game of Ball FPS: %.2f" % (clock.get_fps()))
+            self.screen.fill((255,255,255))
+            #overlays.draw(self.screen)
+           # self.screen.blit(background, (0, SCREEN_SIZE[1]-100))
+            self.screen.blit(background, (800+m, 0))
+            m -= 1
+            self.b1.move()
+            self.b1.display()
+            pygame.display.update()
+            clock.tick(self.fps)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.mainloop = False
+                elif event.type == pygame.KEYDOWN:
+                    self.pressed_key = event.key
+                    
+
 '''
 Created on 12 aug 2013
 
@@ -8,16 +84,16 @@ import ConfigParser, pygame
 
 class Level(object):
     
-    def __init__(self, filename = "img/level.map"):
+    def __init__(self, filename = "lvl1.map"):
         self.tileset =''
         self.map=[]
         self.items = {}
         self.key = {}
-        self.width = 0
+        self.width = 5
         self.load_file(filename)
         
         
-    def load_file(self, filename="img/level.map"):
+    def load_file(self, filename="lvl1.map"):
         parser = ConfigParser.ConfigParser()
         parser.read(filename)
         self.tileset = parser.get("level", "tileset")
@@ -111,3 +187,44 @@ class Level(object):
                 image.blit(tile_image,
                            (map_x*MAP_TILE_WIDTH, map_y*MAP_TILE_HEIGHT))
         return image, overlays
+
+class TileCache(object):
+    
+    def __init__(self, width=32, height=None):
+        self.width = width
+        self.height = height or width
+        self.cache = {}
+        
+    def __getitem__(self, filename):
+        #Returns a table of tiles
+        key = (filename, self.width, self.height)
+        try:
+            return self.cache[key]
+        except KeyError:
+            tile_table = self._load_tile_table(filename, self.width, self.height)
+            self.cache[key] = tile_table
+            return tile_table
+        
+    def _load_tile_table(self, filename, width, height):
+            #Load image and split into tiles
+            
+            image = pygame.image.load(filename).convert()
+            image_width, image_height = image.get_size()
+            tile_table=[]
+            
+            for tile_x in range(0,image_height/height):
+                line =[]
+                tile_table.append(line)
+                for tile_y in range(0, image_height/height):
+                    Rect = (tile_x*width, tile_y*height, width, height)
+                    line.append(image.subsurface(Rect))
+            return tile_table        
+            
+if __name__ == "__main__":
+    MAP_CACHE = TileCache(MAP_TILE_WIDTH, MAP_TILE_HEIGHT)
+    level = Level()
+    level.load_file('lvl1.map')
+    pygame.init()
+    pygame.display.set_mode(SCREEN_SIZE)
+    Game().main()
+    
